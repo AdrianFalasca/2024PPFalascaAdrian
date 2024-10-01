@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcial</title>
+    <style>
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        
+        #formDatos {
+            max-width: 650px; /* Ancho más pequeño */
+            margin: 20px auto; /* Centrar el contenedor */
+            padding: 20px; /* Espaciado interno */
+            border: 1px solid #ccc; /* Borde del contenedor */
+            border-radius: 10px; /* Bordes redondeados */
+            background-color: #fff; /* Color de fondo */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
+
+        /* Estilos de la tabla */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
+
+        .checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; /* Centrar los checkboxes */
+            margin-bottom: 10px;
+        }
+
+        .checkboxes label {
+            margin: 5px 10px;
+        }
+
+        /* Estilos del contenedor del formulario ABM */
+        #formContainer {
+            display: none; /* Ocultar por defecto */
+            max-width: 400px; /* Ancho más pequeño */
+            margin: 50px auto; /* Centrar horizontalmente */
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
+
+        /* Estilos de los campos del formulario */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input, .form-group select {
+            width: calc(100% - 20px); /* Ajustar ancho */
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Estilos de los botones */
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #btnEliminar {
+            background-color: #dc3545;
+        }
+
+        #btnEliminar:hover {
+            background-color: #c82333;
+        }
+
+        #cancelar {
+            background-color: #6c757d;
+        }
+
+        #cancelar:hover {
+            background-color: #5a6268;
+        }
+
+        /* Centrar contenido */
+        .text-center {
+            text-align: center;
+        }
+
+        /* Estilo para el texto del promedio */
+        #PromedioVelMax {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="formDatos">
+        <h1>Formulario de Datos</h1>
+        <label for="filtro">Filtrar por tipo:</label>
+        <select id="filtro">
+            <option value="todos">Todos</option>
+            <option value="aereo">Aereo</option>
+            <option value="terrestre">Terrestre</option>
+        </select>
+        
+
+        <div class="checkboxes">
+            <label><input type="checkbox" id="checkbox-id" checked> ID</label>
+            <label><input type="checkbox" id="checkbox-modelo" checked> modelo</label>
+            <label><input type="checkbox" id="checkbox-anoFab" checked> año fabricacion </label>
+            <label><input type="checkbox" id="checkbox-velMax" checked> vel max</label>
+            <label><input type="checkbox" id="checkbox-altMax" checked> alt max</label>
+            <label><input type="checkbox" id="checkbox-autonomia" checked> autonomia</label>
+            <label><input type="checkbox" id="checkbox-cantPue" checked> cant puertas</label>
+            <label><input type="checkbox" id="checkbox-cantRue" checked> cant ruedas</label>
+        </div>
+
+        <button type="button" id="btnCalcular">Calcular Velocidad Máxima Promedio</button>
+        <p id="PromedioVelMax"></p>
+
+        <table id="tablaDatos">
+            <thead>
+                <tr>
+                    <th data-col="id">ID</th>
+                    <th data-col="modelo">Modelo</th>
+                    <th data-col="anoFab">año fabricacion</th>
+                    <th data-col="velMax">vel max</th>
+                    <th data-col="alt max">alt max</th>
+                    <th data-col="autonomia">Autonomía</th>
+                    <th data-col="cantPue">Cant puertas</th>
+                    <th data-col="cantRue">Cant Ruedas</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button type="button" id="btnAgregar">Agregar</button>
+    </div>
+
+    <div id="formContainer">
+        <h1>Formulario ABM</h1>
+        <form id="vehiculoForm">
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="number" id="id" disabled>
+            </div>
+            <div class="form-group">
+                <label for="atributo1">Modelo:</label>
+                <input type="text" id="atributo1">
+            </div>
+            <div class="form-group">
+                <label for="atributo2">Año Fabricación:</label>
+                <input type="number" id="atributo2">
+            </div>
+            <div class="form-group">
+                <label for="atributo3">Velocidad Máxima:</label>
+                <input type="number" id="atributo3">
+            </div>
+            <div class="form-group">
+                <label for="tipo">Tipo:</label>
+                <select id="tipo">
+                    <option value="aereo">Aereo</option>
+                    <option value="terrestre">Terrestre</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="atributo4">Altura Maxima:</label>
+                <input type="number" id="atributo4">
+            </div>
+            <div class="form-group">
+                <label for="atributo5">Autonomia:</label>
+                <input type="number" id="atributo5">
+            </div>
+            <div class="form-group">
+               <label for="atributo6">Cantidad Puertas:</label>
+               <input type="number" id="atributo6">
+            </div>
+            <div class="form-group">
+               <label for="atributo7">Cantidad Ruedas:</label>
+               <input type="number" id="atributo7">
+            </div>
+            <button type="submit" id="btnGuardar">Guardar</button>
+            <button type="button" id="cancelar">Cancelar</button>
+            <button type="button" id="btnEliminar" style="display: none;">Eliminar</button> <!-- Ocultar inicialmente -->
+        </form>
+    </div>
+
+    <script>
+        class Vehiculo {
+    constructor(id, modelo, anoFab, velMax) {
+        this.id = id;
+        this.modelo = modelo;
+        this.anoFab = anoFab;
+        this.velMax = velMax;
+    }
+
+    toString() {
+        return `ID: ${this.id}, Modelo: ${this.modelo}, ano fabricacion: ${this.anoFab}, Velocidad Máxima: ${this.velMax}`;
+    }
+
+    
+}
+
+class Aereo extends Vehiculo {
+    constructor(id, modelo, anoFab, velMax, altMax, autonomia) {
+        super(id, modelo, anoFab, velMax);
+        this.altMax = altMax;
+        this.autonomia = autonomia;
+    }
+
+    toString() {
+        return `${super.toString()}, Altura máxima: ${this.altMax}, Autonomia: ${this.autonomia}`;
+    }
+    
+}
+
+class Terrestre extends Vehiculo {
+    constructor(id, modelo, anoFab, velMax, cantPue, cantRue) {
+        super(id, modelo, anoFab, velMax);
+        this.cantPue = cantPue;
+        this.cantRue = cantRue;
+    }
+
+    toString() {
+        return `${super.toString()}, Cantidad puertas: ${this.cantPue}, Cantidad ruedas: ${this.cantRue}`;
+    }
+    
+}
+
+        const jsonData = '[{"id":14, "modelo":"Ferrari F100", "anoFab":1998, "velMax":400, "cantPue":2, "cantRue":4},{"id":51, "modelo":"DodgeViper", "anoFab":1991, "velMax":266, "cantPue":2, "cantRue":4},{"id":67, "modelo":"Boeing CH-47 Chinook","anoFab":1962, "velMax":302, "altMax":6, "autonomia":1200},{"id":666, "modelo":"Aprilia RSV 1000 R","anoFab":2004, "velMax":280, "cantPue":0, "cantRue":2},{"id":872, "modelo":"Boeing 747-400", "anoFab":1989,"velMax":988, "altMax":13, "autonomia":13450},{"id":742, "modelo":"Cessna CH-1 SkyhookR", "anoFab":1953,"velMax":174, "altMax":3, "autonomia":870}]'
+        
+
+        let vehiculos = JSON.parse(jsonData).map(item => {
+            if (item.cantPue !== undefined && item.cantRue !== undefined) {
+                return new Terrestre(item.id, item.modelo, item.anoFab, item.velMax, item.cantPue, item.cantRue);
+            } else {
+                return new Aereo(item.id, item.modelo, item.anoFab, item.velMax, item.altMax, item.autonomia);
+            }
+        });
+
+        const mostrarDatos = (tipoFiltro = 'todos') => {
+            const tbody = document.querySelector('#tablaDatos tbody');
+            tbody.innerHTML = '';
+
+            vehiculos.forEach(vehiculo => {
+                if (tipoFiltro === 'todos' || (tipoFiltro === 'terrestre' && vehiculo instanceof Terrestre) || (tipoFiltro === 'aereo' && vehiculo instanceof Aereo)) {
+                    const nuevaFila = `
+                        <tr>
+                            <td class="col-id">${vehiculo.id}</td>
+                            <td class="col-modelo">${vehiculo.modelo}</td>
+                            <td class="col-anoFab">${vehiculo.anoFab}</td>
+                            <td class="col-velMax">${vehiculo.velMax}</td>
+                            <td class="col-cantPue">${vehiculo instanceof Terrestre ? vehiculo.cantPue : ''}</td>
+                            <td class="col-cantRue">${vehiculo instanceof Terrestre ? vehiculo.cantRue : ''}</td>
+                            <td class="col-altMax">${vehiculo instanceof Aereo ? vehiculo.altMax : ''}</td>
+                            <td class="col-autonomia">${vehiculo instanceof Aereo ? vehiculo.autonomia : ''}</td>
+                        </tr>`;
+                    tbody.insertAdjacentHTML('beforeend', nuevaFila);
+                }
+            });
+        };
+
+        mostrarDatos();
+
+        document.getElementById('filtro').addEventListener('change', (event) => {
+            mostrarDatos(event.target.value);
+        });
+
+        // Mostrar el formulario ABM al hacer clic en "Agregar Persona"
+        document.getElementById('btnAgregar').addEventListener('click', () => {
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('formDatos').style.display = 'none'; // Ocultar formulario de datos
+            document.getElementById('vehiculoForm').reset();
+            document.getElementById('btnEliminar').style.display = 'none'; // Ocultar botón Eliminar
+        });
+
+        // Al hacer clic en una fila de la tabla, mostrar el formulario ABM con los datos
+        document.querySelector('#tablaDatos tbody').addEventListener('dblclick', (event) => {
+            const fila = event.target.closest('tr');
+            if (!fila) return;
+
+            const columnas = fila.children;
+            document.getElementById('id').value = columnas[0].textContent;
+            document.getElementById('atributo1').value = columnas[1].textContent;
+            document.getElementById('atributo2').value = columnas[2].textContent;
+            document.getElementById('atributo3').value = columnas[3].textContent;
+            document.getElementById('tipo').value = columnas[4].textContent ? 'terrestre' : 'aereo'; // Determinar el tipo
+            document.getElementById('atributo4').value = columnas[4].textContent;
+            document.getElementById('atributo5').value = columnas[5].textContent;
+            document.getElementById('atributo6').value = columnas[6].textContent;
+            document.getElementById('atributo7').value = columnas[7].textContent;
+            document.getElementById('formContainer').style.display = 'block';
+            document.getElementById('formDatos').style.display = 'none'; // Ocultar formulario de datos
+            document.getElementById('btnEliminar').style.display = 'block'; // Mostrar botón Eliminar
+        });
+
+        // Cancelar y ocultar el formulario ABM
+        document.getElementById('cancelar').addEventListener('click', () => {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('formDatos').style.display = 'block'; // Mostrar formulario de datos
+        });
+
+        
+        document.getElementById('vehiculoForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const id = document.getElementById('id').value;
+    const modelo = document.getElementById('atributo1').value;
+    const anoFab = document.getElementById('atributo2').value;
+    const velMax = document.getElementById('atributo3').value;
+    const tipo = document.getElementById('tipo').value;
+    const altMax = tipo === 'aereo' ? document.getElementById('atributo4').value : ''; 
+    const autonomia = tipo === 'aereo' ? document.getElementById('atributo5').value : ''; 
+    const cantPue = tipo === 'terrestre' ? document.getElementById('atributo6').value : ''; 
+    const cantRue = tipo === 'terrestre' ? document.getElementById('atributo7').value : ''; 
+
+
+    // Validaciones
+    if (modelo.trim() === '') {
+        alert('El modelo no puede estar vacío.');
+        return;
+    }
+    if (anoFab.trim() === '' || isNaN(anoFab) || parseInt(anoFab) < 1885) {
+    alert('El año de fabricación debe ser mayor o igual a 1885.');
+    return;
+}
+
+
+    if (isNaN(velMax) || velMax <= 0) {
+        alert('La velocidad debe ser mayor a 0.');
+        return;
+    }
+
+    // Validaciones según tipo
+    if (tipo === 'aereo') {
+        if (isNaN(altMax) || altMax <= 0) {
+            alert('La altura debe ser mayor a 0.');
+            return;
+        }
+        if (isNaN(autonomia) || autonomia <= 0) {
+            alert('La autonomía debe ser mayor a 0.');
+            return;
+        }
+    } else {
+        if (isNaN(cantPue) || cantPue < 0) {
+            alert('La cantidad de puertas debe ser mayor a -1.');
+            return;
+        }
+        if (isNaN(cantRue) || cantRue <= 0) {
+            alert('La cantidad de ruedas debe ser mayor a 0.');
+            return;
+        }
+    }
+
+    // Guardar o editar
+    if (id) {
+        const vehiculo = vehiculos.find(p => p.id == id);
+        if (vehiculo) {
+            vehiculo.modelo = modelo;
+            vehiculo.anoFab = anoFab;
+            vehiculo.velMax = velMax;
+            if (tipo === 'terrestre') {
+                vehiculo.cantPue = cantPue;
+                vehiculo.cantRue = cantRue; 
+            } else {
+                vehiculo.autonomia = autonomia;
+                vehiculo.altMax = altMax; 
+            }
+        }
+    } else {
+        const nuevoId = vehiculos.length > 0 ? Math.max(...vehiculos.map(p => p.id)) + 1 : 1;
+        if (tipo === 'terrestre') {
+            vehiculos.push(new Terrestre(nuevoId,modelo, anoFab, velMax, cantPue, cantRue));
+        } else {
+            vehiculos.push(new Aereo(nuevoId, modelo, anoFab, velMax, altMax, autonomia));
+        }
+    }
+
+    mostrarDatos(); // Actualizar la tabla
+    document.getElementById('formContainer').style.display = 'none'; // Ocultar formulario ABM
+    document.getElementById('formDatos').style.display = 'block'; // Mostrar formulario de datos
+});
+
+
+
+
+
+
+
+            // Eliminar persona
+    document.getElementById('btnEliminar').addEventListener('click', () => {
+        const id = document.getElementById('id').value;
+        vehiculos = vehiculos.filter(p => p.id != id);
+        mostrarDatos(); // Actualizar la tabla
+        document.getElementById('formContainer').style.display = 'none'; // Ocultar formulario ABM
+        document.getElementById('formDatos').style.display = 'block'; // Mostrar formulario de datos
+    });
+
+    // Función para calcular y mostrar el promedio de edad
+    const calcularVelocidadMax = (tipoFiltro) => {
+        let vehiculosFiltrados = vehiculos.filter(vehiculo => {
+            return tipoFiltro === 'todos' ||
+                (tipoFiltro === 'terrestre' && vehiculo instanceof Terrestre) ||
+                (tipoFiltro === 'aereo' && vehiculo instanceof Aereo);
+        });
+
+
+        // Verificar que sea un número válido antes de sumarla
+        let totalvehiculos = vehiculosFiltrados.reduce((acc, vehiculo) => {
+            let velocidad = parseInt(vehiculo.velMax, 10);
+            return acc + (isNaN(velocidad) ? 0 : velocidad); 
+        }, 0);
+
+        let promedio = totalvehiculos / vehiculosFiltrados.length;
+
+        // Mostrar el promedio con dos decimales
+        document.getElementById('PromedioVelMax').textContent = `Promedio de velocidad máxima: ${promedio.toFixed(2)}`;
+    };
+
+        // Agregar el listener al botón para calcular el promedio
+        document.getElementById('btnCalcular').addEventListener('click', () => {
+            const tipoFiltro = document.getElementById('filtro').value;
+            calcularVelocidadMax(tipoFiltro);
+        });
+
+        const gestionarColumnas = () => {
+        const checkboxes = document.querySelectorAll('.checkboxes input[type="checkbox"]');
+        
+        checkboxes.forEach(checkbox => {
+            const columnClass = `.col-${checkbox.id.split('-')[1]}`; // Obtener la clase correspondiente a la columna
+            const columnas = document.querySelectorAll(columnClass); // Seleccionar todas las celdas de esa columna
+            const th = document.querySelector(`th[data-col="${checkbox.id.split('-')[1]}"]`); // Seleccionar el encabezado
+
+            if (checkbox.checked) {
+                columnas.forEach(col => col.style.display = 'table-cell'); // Mostrar celdas de datos
+                if (th) th.style.display = 'table-cell'; // Mostrar encabezado
+            } else {
+                columnas.forEach(col => col.style.display = 'none'); // Ocultar celdas de datos
+                if (th) th.style.display = 'none'; // Ocultar encabezado
+            }
+        });
+    };
+
+    // Ejecutar la función cada vez que se cambia el estado de un checkbox
+    document.querySelectorAll('.checkboxes input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', gestionarColumnas);
+    });
+
+    // Llamar a la función inicialmente para aplicar la visibilidad correcta de las columnas
+    gestionarColumnas();
+
+// Agregar listener a los encabezados de las columnas para ordenar al hacer clic
+document.querySelectorAll('#tablaDatos th').forEach(th => {
+    th.addEventListener('click', () => {
+        const column = th.getAttribute('data-col');
+        const sortOrder = th.dataset.order = -(th.dataset.order || -1);
+        
+        vehiculos.sort((a, b) => {
+            let valueA = a[column];
+            let valueB = b[column];
+            
+            if (valueA === undefined) valueA = '';
+            if (valueB === undefined) valueB = '';
+            
+            if (typeof valueA === 'string') {
+                valueA = valueA.toUpperCase();
+                valueB = valueB.toUpperCase();
+            }
+            
+            if (valueA < valueB) return -sortOrder;
+            if (valueA > valueB) return sortOrder;
+            
+            return 0;
+        });
+
+
+        mostrarDatos(document.getElementById('filtro').value);
+    });
+});
+
+    </script>
+</body>
+</html>
